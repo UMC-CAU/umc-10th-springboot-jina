@@ -1,0 +1,4 @@
+package com.example.umc.domain.mission.repository;
+
+public interface MissionRepository {
+}
