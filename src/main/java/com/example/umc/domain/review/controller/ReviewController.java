@@ -10,10 +10,7 @@ import com.example.umc.domain.review.service.ReviewService;
 import com.example.umc.global.apiPayload.ApiResponse;
 import com.example.umc.global.apiPayload.code.BaseSuccessCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,10 +20,11 @@ public class ReviewController {
 
     @PostMapping("/reviews")
     public ApiResponse<ReviewResDTO.PostReview> postReview(
+            @RequestHeader("Authorization") String token,
             @RequestBody ReviewReqDTO.PostReview dto
     ){
         BaseSuccessCode code = ReviewSuccessCode.REVIEW_POST_SUCCESS;
-        return ApiResponse.onSuccess(code, reviewService.postReview(dto));
+        return ApiResponse.onSuccess(code, reviewService.postReview(token, dto));
     }
 
 }

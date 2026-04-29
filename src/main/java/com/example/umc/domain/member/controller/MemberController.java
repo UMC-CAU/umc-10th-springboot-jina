@@ -17,20 +17,22 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("v1/users/me")
+    /*@PostMapping("v1/users/me")
     public ApiResponse<MemberResDTO.GetInfo> getInfo(
             @RequestBody MemberReqDTO.GetInfo dto
     ){
         BaseSuccessCode code = MemberSuccessCode.OK;
         return ApiResponse.onSuccess(code, memberService.getInfo(dto));
-    }
+    }*/
     @GetMapping("/home")// get이라 req없음 즉 파라미터 x
     public ApiResponse<MemberResDTO.Home> home(
+            @RequestHeader("Authorization") String token
     ){
-        return ApiResponse.onSuccess(MemberSuccessCode.HOME_SUCCESS, memberService.getHome());
+        return ApiResponse.onSuccess(MemberSuccessCode.HOME_SUCCESS, memberService.getHome(token));
     }
     @GetMapping("/me/mission")
     public ApiResponse<MemberResDTO.MissionList> missionList(
+            @RequestHeader("Authorization") String token,
             // 1. cursor: 선택사항(Optional)이므로 required = false
             @RequestParam(name = "cursor", required = false) String cursor,
 
@@ -40,7 +42,7 @@ public class MemberController {
             // 3. status: 필수값이며 특정 Enum(ACTIVE, COMPLETE) 문자열을 받음
             @RequestParam(name = "status") String status
     ){
-        return ApiResponse.onSuccess(MemberSuccessCode.MISSION_LIST_SUCCESS, memberService.getMissionList(cursor, size, status));
+        return ApiResponse.onSuccess(MemberSuccessCode.MISSION_LIST_SUCCESS, memberService.getMissionList(token, cursor, size, status));
 
     }
 

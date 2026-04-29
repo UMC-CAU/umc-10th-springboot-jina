@@ -51,7 +51,7 @@ public class MemberResDTO {
             String storeName,
             String category,
             Integer reward,
-            Integer deadLineDay
+            Integer deadlineDay
     ){}
 
     @Builder

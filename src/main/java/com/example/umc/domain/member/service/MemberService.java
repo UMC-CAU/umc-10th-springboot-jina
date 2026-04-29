@@ -49,7 +49,7 @@ public class MemberService {
         return "OK";
     }
 
-    public MemberResDTO.GetInfo getInfo(MemberReqDTO.GetInfo dto) {
+    /*public MemberResDTO.GetInfo getInfo(MemberReqDTO.GetInfo dto) {
         // DTO에서 유저 ID를 추출
         Long memberId = dto.id();
 
@@ -59,5 +59,17 @@ public class MemberService {
 
         // 컨버터를 이용해서 응답 DTO 생성 & return
         return MemberConverter.toGetInfo(member);
+    }*/
+
+    public MemberResDTO.SignUp getSignUp(MemberReqDTO.SignUp dto) {
+        // 실제 로직에서는 dto를 Entity로 변환해 DB에 저장하겠지만,
+        // 지금은 빨간 줄을 없애고 Swagger 확인을 위해 더미 데이터를 반환.
+        return MemberConverter.toSignUpResult();
+    }
+    public MemberResDTO.MissionList getMissionList(String token, String cursor, Integer size, String status){
+        return MemberConverter.toMissionList();
+    }
+    public  MemberResDTO.Home getHome(String token){
+        return MemberConverter.toHome();
     }
 }
