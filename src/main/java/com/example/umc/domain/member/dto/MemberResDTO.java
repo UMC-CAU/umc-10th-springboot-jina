@@ -54,22 +54,5 @@ public class MemberResDTO {
             Integer deadlineDay
     ){}
 
-    @Builder
-    public record MissionList(
-            MissionDetailDTO missions,
-            String nextCursor,
-            Boolean hasNext
-    ){}
 
-    @Builder
-    public record MissionDetailDTO(
-            Long missionId,
-            Long storeId,
-            String storeName,
-            String distance,
-            String category,
-            Integer reward,
-            List<String> storeImageUrls,
-            String status
-    ){}
 }

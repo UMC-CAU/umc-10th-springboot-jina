@@ -1,14 +1,11 @@
 package com.example.umc.domain.review.controller;
 
-import com.example.umc.domain.member.dto.MemberReqDTO;
-import com.example.umc.domain.member.dto.MemberResDTO;
-import com.example.umc.domain.member.exception.code.MemberSuccessCode;
 import com.example.umc.domain.review.dto.ReviewReqDTO;
 import com.example.umc.domain.review.dto.ReviewResDTO;
-import com.example.umc.domain.review.exception.code.ReviewSuccessCode;
 import com.example.umc.domain.review.service.ReviewService;
 import com.example.umc.global.apiPayload.ApiResponse;
 import com.example.umc.global.apiPayload.code.BaseSuccessCode;
+import com.example.umc.global.apiPayload.code.GeneralSuccessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +20,7 @@ public class ReviewController {
             @RequestHeader("Authorization") String token,
             @RequestBody ReviewReqDTO.PostReview dto
     ){
-        BaseSuccessCode code = ReviewSuccessCode.REVIEW_POST_SUCCESS;
+        BaseSuccessCode code = GeneralSuccessCode.OK;
         return ApiResponse.onSuccess(code, reviewService.postReview(token, dto));
     }
 

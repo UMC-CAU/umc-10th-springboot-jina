@@ -45,7 +45,7 @@ public class MemberService {
     public String deleteUser(
 
     ){
-        memberRepository.deleteByName("test");
+        memberRepository.deleteById(5L);
         return "OK";
     }
 
@@ -66,10 +66,8 @@ public class MemberService {
         // 지금은 빨간 줄을 없애고 Swagger 확인을 위해 더미 데이터를 반환.
         return MemberConverter.toSignUpResult();
     }
-    public MemberResDTO.MissionList getMissionList(String token, String cursor, Integer size, String status){
-        return MemberConverter.toMissionList();
-    }
-    public  MemberResDTO.Home getHome(String token){
+
+    public  MemberResDTO.Home getHome(Long memberId){
         return MemberConverter.toHome();
     }
 }

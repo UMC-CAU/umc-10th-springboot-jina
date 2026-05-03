@@ -53,25 +53,7 @@ public class MemberConverter {
                 .region("안암동")
                 .build();
     }
-    public static MemberResDTO.MissionList toMissionList() {
-        MemberResDTO.MissionDetailDTO mission1 = MemberResDTO.MissionDetailDTO.builder()
-                .missionId(10L)
-                .storeId(2L)
-                .storeName("마라탕")
-                .distance("2km")
-                .category("중식")
-                .reward(200)
-                .storeImageUrls(List.of("http. . "))
-                .status("ACTIVE")
-                .build();
 
-        return MemberResDTO.MissionList.builder()
-                .missions(mission1)
-                .nextCursor("2026. . ")
-                .hasNext(true)
-                .build();
-
-    }
     public static MemberResDTO.SignUp toSignUpResult() {
         return MemberResDTO.SignUp.builder()
                 .memberId(1L)

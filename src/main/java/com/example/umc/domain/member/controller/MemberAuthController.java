@@ -2,10 +2,10 @@ package com.example.umc.domain.member.controller;
 
 import com.example.umc.domain.member.dto.MemberReqDTO;
 import com.example.umc.domain.member.dto.MemberResDTO;
-import com.example.umc.domain.member.exception.code.MemberSuccessCode;
 import com.example.umc.domain.member.service.MemberService;
 import com.example.umc.global.apiPayload.ApiResponse;
 import com.example.umc.global.apiPayload.code.BaseSuccessCode;
+import com.example.umc.global.apiPayload.code.GeneralSuccessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +23,7 @@ public class MemberAuthController {
     public ApiResponse<MemberResDTO.SignUp> signUp(
             @RequestBody MemberReqDTO.SignUp dto
     ){
-        BaseSuccessCode code = MemberSuccessCode.JOIN_SUCCESS;
+        BaseSuccessCode code = GeneralSuccessCode.OK;
         return ApiResponse.onSuccess(code, memberService.getSignUp(dto));
     }
 }

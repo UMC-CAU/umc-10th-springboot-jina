@@ -17,20 +17,20 @@ import java.time.LocalDate;
 @Table(name = "member")
 public class Member {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(nullable = false, length = 20)
     private String name;
 
-    @Column(name = "gender")
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "birth")
+    @Column(nullable = false)
     private LocalDate birth;
 
-    @Column(name = "address")
+    @Column(length = 50)
     @Enumerated(EnumType.STRING)
     private Address address;
 }

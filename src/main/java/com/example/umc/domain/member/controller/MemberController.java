@@ -2,7 +2,6 @@ package com.example.umc.domain.member.controller;
 
 import com.example.umc.domain.member.dto.MemberReqDTO;
 import com.example.umc.domain.member.dto.MemberResDTO;
-import com.example.umc.domain.member.exception.code.MemberSuccessCode;
 import com.example.umc.domain.member.service.MemberService;
 import com.example.umc.global.apiPayload.ApiResponse;
 import com.example.umc.global.apiPayload.code.BaseSuccessCode;
@@ -26,25 +25,11 @@ public class MemberController {
     }*/
     @GetMapping("/home")// get이라 req없음 즉 파라미터 x
     public ApiResponse<MemberResDTO.Home> home(
-            @RequestHeader("Authorization") String token
+            @RequestParam(name = "memberId") Long memberId
     ){
-        return ApiResponse.onSuccess(MemberSuccessCode.HOME_SUCCESS, memberService.getHome(token));
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, memberService.getHome(memberId));
     }
-    @GetMapping("/me/mission")
-    public ApiResponse<MemberResDTO.MissionList> missionList(
-            @RequestHeader("Authorization") String token,
-            // 1. cursor: 선택사항(Optional)이므로 required = false
-            @RequestParam(name = "cursor", required = false) String cursor,
 
-            // 2. size: 선택사항이며 기본값이 10이므로 defaultValue 설정
-            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
-
-            // 3. status: 필수값이며 특정 Enum(ACTIVE, COMPLETE) 문자열을 받음
-            @RequestParam(name = "status") String status
-    ){
-        return ApiResponse.onSuccess(MemberSuccessCode.MISSION_LIST_SUCCESS, memberService.getMissionList(token, cursor, size, status));
-
-    }
 
 
     // 아무것도 받지 않은 경우
