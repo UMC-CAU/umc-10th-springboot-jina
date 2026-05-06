@@ -7,14 +7,21 @@ import com.example.umc.domain.member.entity.Member;
 import com.example.umc.domain.member.exception.MemberException;
 import com.example.umc.domain.member.exception.code.MemberErrorCode;
 import com.example.umc.domain.member.repository.MemberRepository;
+import com.example.umc.domain.mission.entity.Mission;
+import com.example.umc.domain.mission.repository.MissionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final MissionRepository missionRepository;
 
     // Query Parameter
     public String singleParameter(
@@ -49,9 +56,7 @@ public class MemberService {
         return "OK";
     }
 
-    /*public MemberResDTO.GetInfo getInfo(MemberReqDTO.GetInfo dto) {
-        // DTO에서 유저 ID를 추출
-        Long memberId = dto.id();
+    public MemberResDTO.GetInfo getInfo(Long memberId) {
 
         // DB에서 해당 유저 ID로 데이터 조회
         Member member = memberRepository.findById(memberId)
@@ -59,7 +64,7 @@ public class MemberService {
 
         // 컨버터를 이용해서 응답 DTO 생성 & return
         return MemberConverter.toGetInfo(member);
-    }*/
+    }
 
     public MemberResDTO.SignUp getSignUp(MemberReqDTO.SignUp dto) {
         // 실제 로직에서는 dto를 Entity로 변환해 DB에 저장하겠지만,
@@ -67,7 +72,24 @@ public class MemberService {
         return MemberConverter.toSignUpResult();
     }
 
-    public  MemberResDTO.Home getHome(Long memberId){
-        return MemberConverter.toHome();
-    }
+    public  MemberResDTO.Home getHome(Long memberId, String cursorStr, Integer size){
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Integer currentCount = missionRepository.countChallengingMissions(memberId);
+        Integer goal = 10;
+
+        Long cursor = (cursorStr != null && !cursorStr.isEmpty()) ? Long.parseLong(cursorStr) : null;
+        // missionRepository.findHomeMissions(...) 같이 레포지토리에 새로 만들어야 해요!
+        Pageable pageable = PageRequest.of(0, size + 1); // 10개 요청 시 11개 가져와서 hasNext 판단
+        List<Mission> missions = missionRepository.findHomeMissions(cursor, pageable);
+        boolean hasNext = false;
+        if (missions.size() > size) {
+            hasNext = true;
+            missions = missions.subList(0, size);
+        }
+
+        // 4. 컨버터에게 전부 넘겨서 최종 결과물 만들기!
+        return MemberConverter.toHome(member, currentCount, goal, missions, hasNext);
+        }
 }

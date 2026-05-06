@@ -16,18 +16,27 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    /*@PostMapping("v1/users/me")
+    @GetMapping("v1/users/me")
     public ApiResponse<MemberResDTO.GetInfo> getInfo(
-            @RequestBody MemberReqDTO.GetInfo dto
-    ){
-        BaseSuccessCode code = MemberSuccessCode.OK;
-        return ApiResponse.onSuccess(code, memberService.getInfo(dto));
-    }*/
+
+            @RequestParam(name = "memberId") Long memberId    ){
+
+        BaseSuccessCode code = GeneralSuccessCode.OK;
+        return ApiResponse.onSuccess(code, memberService.getInfo(memberId));
+    }
+
     @GetMapping("/home")// get이라 req없음 즉 파라미터 x
     public ApiResponse<MemberResDTO.Home> home(
-            @RequestParam(name = "memberId") Long memberId
+            @RequestParam(name = "memberId") Long memberId,
+            @RequestParam(name = "cursor", required = false) String cursor,
+
+            // 💡 한 번에 몇 개의 미션을 보여줄지 (기본 10개)
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size
+
     ){
-        return ApiResponse.onSuccess(GeneralSuccessCode.OK, memberService.getHome(memberId));
+        MemberResDTO.Home result = memberService.getHome(memberId, cursor, size);
+        BaseSuccessCode code = GeneralSuccessCode.OK;
+        return ApiResponse.onSuccess(code, result);
     }
 
 

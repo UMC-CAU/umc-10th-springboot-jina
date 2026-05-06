@@ -1,4 +1,4 @@
-package com.example.umc.domain.review.entity;
+package com.example.umc.domain.Question.entity;
 
 import com.example.umc.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -12,18 +12,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "review_photo")
+@Table(name = "question_reply")
 
-public class ReviewPhoto extends BaseEntity {
-
+public class QuestionReply extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "photo_url", nullable = false)
-    private String photoUrl;
+    @Column(name = "text", nullable = false)
+    private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id")
-    private Review review;
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
 }
