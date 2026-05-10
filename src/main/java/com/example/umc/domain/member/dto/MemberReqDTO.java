@@ -30,6 +30,7 @@ public class MemberReqDTO {
             Gender gender,
             LocalDate birth,
             Address address,
+            String region,
 
             Boolean ageConfirm,       // 연령 확인
             Boolean serviceAgree,     // 서비스 이용약관

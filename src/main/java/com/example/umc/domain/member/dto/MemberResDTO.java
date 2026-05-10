@@ -36,7 +36,7 @@ public class MemberResDTO {
             Boolean hasNext,
             String region,
             MissionProgressDTO missionProgress,
-            MyMissionDTO myMission
+            List<MyMissionDTO> myMissions
     ){}
 
     @Builder
@@ -53,6 +53,8 @@ public class MemberResDTO {
             Integer reward,
             Integer deadlineDay
     ){}
+
+
 
 
 }

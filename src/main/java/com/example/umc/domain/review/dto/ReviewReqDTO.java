@@ -9,4 +9,10 @@ public class ReviewReqDTO {
             String text,
             List<String> images
     ){}
+
+    public record ReviewCreate(
+            Long memberId,
+            Integer rating,
+            String text
+    ){}
 }

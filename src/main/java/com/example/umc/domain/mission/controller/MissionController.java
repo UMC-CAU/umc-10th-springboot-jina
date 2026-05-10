@@ -2,6 +2,7 @@ package com.example.umc.domain.mission.controller;
 
 
 import com.example.umc.domain.mission.dto.MissionResDTO;
+import com.example.umc.domain.mission.enums.MissionStatus;
 import com.example.umc.domain.mission.service.MissionService;
 import com.example.umc.global.apiPayload.ApiResponse;
 import com.example.umc.global.apiPayload.code.BaseSuccessCode;
@@ -25,8 +26,9 @@ public class MissionController {
     }
 
     @GetMapping("/mission/me")
-    public ApiResponse<MissionResDTO.MissionList> missionList(
+    public ApiResponse<MissionResDTO.MyMissionListDTO> missionList(
             @RequestParam(name = "memberId") Long memberId,
+            //@RequestHeader("Authorization") String token 으로 하는개 나을듯?
             // 1. cursor: 선택사항(Optional)이므로 required = false
             @RequestParam(name = "cursor", required = false) String cursor,
 
@@ -34,9 +36,13 @@ public class MissionController {
             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
 
             // 3. status: 필수값이며 특정 Enum(ACTIVE, COMPLETE) 문자열을 받음
-            @RequestParam(name = "status") String status
+            @RequestParam(name = "status") MissionStatus status
     ){
-        return ApiResponse.onSuccess(GeneralSuccessCode.OK, missionService.getMissionList(memberId, cursor, size, status));
+        MissionResDTO.MyMissionListDTO result = missionService.getMyMissions(memberId, status, cursor, size);
 
+        BaseSuccessCode code = GeneralSuccessCode.OK;
+        return ApiResponse.onSuccess(code, result);
     }
+
+
 }

@@ -29,4 +29,23 @@ public class MissionResDTO {
             List<String> storeImageUrls,
             String status
     ){}
+
+    @Builder
+    public record MyMissionListDTO(
+            List<MyMissionDTO> myMissions,
+            String nextCursor,
+            Boolean hasNext
+
+    ){}
+    @Builder
+    public record MyMissionDTO(
+            Long missionId,
+            String storeName,
+            Long reward,
+            String content,
+            String status // 진행중, 진행완료 등의 상태
+
+    ){}
+
+
 }

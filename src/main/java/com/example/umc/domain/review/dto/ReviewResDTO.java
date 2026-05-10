@@ -11,4 +11,10 @@ public class ReviewResDTO {
             Long reviewId,
             LocalDateTime createdAt
     ){}
+
+    @Builder
+    public record ReviewCreateResult(
+            Long reviewId,
+            LocalDateTime createdAt
+    ){}
 }
