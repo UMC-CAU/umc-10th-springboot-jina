@@ -29,7 +29,6 @@ public class ReviewService {
         return ReviewConverter.toPostReview();
     }
 
-    @Transactional // INSERT 쿼리를 날릴 거니까 트랜잭션을 걸어줍니다.
     public Review createReview(Long storeId, ReviewReqDTO.ReviewCreate request) {
 
         // [1] 세 번째 물음표(?) : member_id (users_id) 에 넣을 사람을 DB에서 데려옵니다.

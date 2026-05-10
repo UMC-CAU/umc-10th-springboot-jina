@@ -3,6 +3,7 @@ package com.example.umc.domain.member.converter;
 import com.example.umc.domain.member.dto.MemberResDTO;
 import com.example.umc.domain.member.entity.Member;
 import com.example.umc.domain.mission.entity.Mission;
+import com.example.umc.domain.store.enums.RegionName;
 
 import java.time.LocalDateTime;
 import java.util.List;

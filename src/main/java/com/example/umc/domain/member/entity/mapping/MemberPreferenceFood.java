@@ -4,16 +4,13 @@ import com.example.umc.domain.member.entity.Food;
 import com.example.umc.domain.member.entity.Member;
 import com.example.umc.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "member_preference_food")
 public class MemberPreferenceFood extends BaseEntity {
     @Id

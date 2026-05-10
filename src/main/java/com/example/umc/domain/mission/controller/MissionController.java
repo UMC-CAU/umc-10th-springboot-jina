@@ -28,6 +28,7 @@ public class MissionController {
     @GetMapping("/mission/me")
     public ApiResponse<MissionResDTO.MyMissionListDTO> missionList(
             @RequestParam(name = "memberId") Long memberId,
+            //@RequestHeader("Authorization") String token 으로 하는개 나을듯?
             // 1. cursor: 선택사항(Optional)이므로 required = false
             @RequestParam(name = "cursor", required = false) String cursor,
 
