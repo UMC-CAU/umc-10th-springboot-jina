@@ -3,6 +3,8 @@ package com.example.umc.domain.mission.repository;
 import com.example.umc.domain.mission.entity.Mapping.MemberMission;
 import com.example.umc.domain.mission.entity.Mission;
 import com.example.umc.domain.mission.enums.MissionStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,5 +39,19 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
 
 
 
+    Page<Mission> findAllByStore_Id(Long storeId, Pageable pageable);
+
+    // 커서 있는 경우
+    Slice<Mission> findMissionsByStore_IdAndIdLessThanOrderByIdDesc(
+            Long storeId,
+            Long idCursor,
+            Pageable pageable
+    );
+
+    // 커서 없는 경우
+    Slice<Mission> findMissionsByStore_IdOrderByIdDesc(
+            Long storeId,
+            Pageable pageable
+    );
 }
 

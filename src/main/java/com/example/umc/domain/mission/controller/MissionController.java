@@ -1,14 +1,19 @@
 package com.example.umc.domain.mission.controller;
 
 
+import com.example.umc.domain.mission.dto.MissionReqDTO;
 import com.example.umc.domain.mission.dto.MissionResDTO;
 import com.example.umc.domain.mission.enums.MissionStatus;
+import com.example.umc.domain.mission.exception.code.MissionSuccessCode;
 import com.example.umc.domain.mission.service.MissionService;
 import com.example.umc.global.apiPayload.ApiResponse;
 import com.example.umc.global.apiPayload.code.BaseSuccessCode;
 import com.example.umc.global.apiPayload.code.GeneralSuccessCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +48,29 @@ public class MissionController {
         BaseSuccessCode code = GeneralSuccessCode.OK;
         return ApiResponse.onSuccess(code, result);
     }
+
+    @PostMapping("/v1/stores/{storeId}/missions")
+    public ApiResponse<Void> createMission( //반환할거 없으니까 void
+            @PathVariable Long storeId,
+            @RequestBody @Valid MissionReqDTO.CreateMission dto
+    ){
+        BaseSuccessCode code = MissionSuccessCode.CREATED;
+        return ApiResponse.onSuccess(code, missionService.createMission(storeId, dto));
+    }
+
+    // 가게 내 미션들 조회
+    @GetMapping("/v1/stores/{storeId}/missions")
+    public ApiResponse<MissionResDTO.Pagination<MissionResDTO.GetMission>> getMissions(
+            @PathVariable Long storeId,
+            @RequestParam Integer pageSize,
+            @RequestParam String cursor,
+            @RequestParam String query
+    ) {
+        BaseSuccessCode code = MissionSuccessCode.OK;
+        return ApiResponse.onSuccess(code, missionService.getMissions(storeId, pageSize, cursor, query));
+    }
+
+
 
 
 }

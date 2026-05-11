@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +26,16 @@ public class Mission extends BaseEntity {
     private Long id;
 
     @Column(name = "point", nullable = false)
-    private Long point;
+    private Integer point;
+
+    @Column(name = "conditional", nullable = false) //DB랑 동기화 안돼서 그럼 문제없음
+    private String conditional;
 
     @Column(name = "text", nullable = false)
     private String text;
 
     @Column(name = "deadline", nullable = false)
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
@@ -39,6 +43,7 @@ public class Mission extends BaseEntity {
 
 
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<MemberMission> memberMissionList = new ArrayList<>();
 }
 

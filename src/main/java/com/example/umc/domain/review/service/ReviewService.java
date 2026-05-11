@@ -37,7 +37,7 @@ public class ReviewService {
 
         // [2] 네 번째 물음표(?) : store_id (restaurant_id) 에 넣을 식당을 DB에서 데려옵니다.
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreException(StoreErrorCode.STORE_NOT_FOUND));
+                .orElseThrow(() -> new StoreException(StoreErrorCode.NOT_FOUND));
 
         // [3] 첫 번째(content), 두 번째(rating) 물음표(?)를 포함하여 최종 쿼리문을 쏠 준비를 합니다. (Converter가 조립해 줌)
         /*
