@@ -145,6 +145,27 @@ public class MissionService {
         );
     }
 
+    // 진행중인 내 미션 조회
+    // pageNumber는 0부터 시작합니다. 예: 첫 페이지는 0, 두 번째 페이지는 1
+    // Sort.by(..., "id")는 최신으로 생성된 MemberMission이 먼저 보이도록 id 내림차순 정렬을 합니다.
+    public MissionResDTO.MissionPageResponseDTO<MissionResDTO.ProgressMissionDTO> getProgressMission(
+            Long memberId,
+            Integer pageNumber,
+            Integer pageSize
+    ) {
+        PageRequest pageRequest = PageRequest.of(
+                pageNumber,
+                pageSize,
+                Sort.by(Sort.Direction.DESC, "id")
+        );
 
+        Page<MemberMission> progressMissions = missionRepository.findProgressMissions(
+                memberId,
+                MissionStatus.CHALLENGING,
+                pageRequest
+        );
+
+        return MissionConverter.toProgressMissionPageResponseDTO(progressMissions);
+    }
 
 }
