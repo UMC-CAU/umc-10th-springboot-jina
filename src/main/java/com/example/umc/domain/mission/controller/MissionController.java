@@ -70,13 +70,10 @@ public class MissionController {
         return ApiResponse.onSuccess(code, missionService.getMissions(storeId, pageSize, cursor, query));
     }
     // 7주차 미션 진행중인 내 미션 보기
-    @GetMapping("/missions/me/progress")
+    @PostMapping("/missions/me/progress")
     public ApiResponse<MissionResDTO.MissionPageResponseDTO<MissionResDTO.ProgressMissionDTO>>
     getProgressMissions(
-
-            @RequestParam Long memberId,
-            @RequestParam Integer pageNumber,
-            @RequestParam Integer pageSize
+            @RequestBody @Valid MissionReqDTO.ProgressMissionRequest request
     ){
 
         BaseSuccessCode code = GeneralSuccessCode.OK;
@@ -84,9 +81,9 @@ public class MissionController {
         return ApiResponse.onSuccess(
                 code,
                 missionService.getProgressMission(
-                        memberId,
-                        pageNumber,
-                        pageSize
+                        request.memberId(),
+                        request.pageNumber(),
+                        request.pageSize()
                 )
         );
     }
