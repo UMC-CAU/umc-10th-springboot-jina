@@ -74,7 +74,7 @@ public class MissionController {
     public ApiResponse<MissionResDTO.MissionPageResponseDTO<MissionResDTO.ProgressMissionDTO>>
     getProgressMissions(
 
-            @RequestHeader("Authorization") String token,
+            @RequestParam Long memberId,
             @RequestParam Integer pageNumber,
             @RequestParam Integer pageSize
     ){
@@ -84,7 +84,7 @@ public class MissionController {
         return ApiResponse.onSuccess(
                 code,
                 missionService.getProgressMission(
-                        token,
+                        memberId,
                         pageNumber,
                         pageSize
                 )
