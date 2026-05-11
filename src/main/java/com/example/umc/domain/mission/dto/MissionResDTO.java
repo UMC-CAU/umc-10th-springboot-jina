@@ -55,12 +55,29 @@ public class MissionResDTO {
             String conditional
     ){}
 
-    //페이지네이션 틀 (오프셋)
+    //페이지네이션 틀
     @Builder
     public record Pagination<T>(
             List<T> data,
             Boolean hasNext,
             String nextCursor,
+            Integer pageSize
+    ){}
+
+    @Builder
+    public record ProgressMissionDTO(
+
+            Long missionId,
+            String storeName,
+            Integer reward,
+            String content,
+            String status
+    ){}
+    @Builder
+    public record MissionPageResponseDTO<T>(
+
+            List<T> data,
+            Integer pageNumber,
             Integer pageSize
     ){}
 
