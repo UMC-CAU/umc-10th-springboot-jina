@@ -37,6 +37,22 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
                 "WHERE mm.member.id = :memberId AND mm.missionStatus = 'CHALLENGING'")
         Integer countChallengingMissions(@Param("memberId") Long memberId);
 
+    // 진행중인 내 미션 목록 조회
+    // Page로 반환하면 현재 페이지의 데이터뿐 아니라 전체 개수, 전체 페이지 수도 함께 알 수 있습니다.
+    @Query(
+            value = "SELECT mm FROM MemberMission mm " +
+                    "JOIN FETCH mm.mission m " +
+                    "JOIN FETCH m.store s " +
+                    "WHERE mm.member.id = :memberId AND mm.missionStatus = :status",
+            countQuery = "SELECT COUNT(mm) FROM MemberMission mm " +
+                    "WHERE mm.member.id = :memberId AND mm.missionStatus = :status"
+    )
+    Page<MemberMission> findProgressMissions(
+            @Param("memberId") Long memberId,
+            @Param("status") MissionStatus status,
+            Pageable pageable
+    );
+
 
 
     Page<Mission> findAllByStore_Id(Long storeId, Pageable pageable);
