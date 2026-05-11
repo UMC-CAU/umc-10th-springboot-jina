@@ -69,6 +69,27 @@ public class MissionController {
         BaseSuccessCode code = MissionSuccessCode.OK;
         return ApiResponse.onSuccess(code, missionService.getMissions(storeId, pageSize, cursor, query));
     }
+    // 7주차 미션 진행중인 내 미션 보기
+    @GetMapping("/missions/me/progress")
+    public ApiResponse<MissionResDTO.MissionPageResponseDTO<MissionResDTO.ProgressMissionDTO>>
+    getProgressMissions(
+
+            @RequestHeader("Authorization") String token,
+            @RequestParam Integer pageNumber,
+            @RequestParam Integer pageSize
+    ){
+
+        BaseSuccessCode code = GeneralSuccessCode.OK;
+
+        return ApiResponse.onSuccess(
+                code,
+                missionService.getProgressMission(
+                        token,
+                        pageNumber,
+                        pageSize
+                )
+        );
+    }
 
 
 
