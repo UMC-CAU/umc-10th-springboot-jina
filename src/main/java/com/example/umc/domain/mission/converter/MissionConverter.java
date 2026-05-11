@@ -6,6 +6,7 @@ import com.example.umc.domain.mission.dto.MissionResDTO;
 import com.example.umc.domain.mission.entity.Mapping.MemberMission;
 import com.example.umc.domain.mission.entity.Mission;
 import com.example.umc.domain.store.entity.Store;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,6 +106,39 @@ public class MissionConverter {
                 .hasNext(hasNext)
                 .nextCursor(nextCursor)
                 .pageSize(pageSize)
+                .build();
+    }
+
+    // 진행중인 미션 하나를 응답 DTO 하나로 변환합니다.
+    // MemberMission은 사용자와 미션 사이의 매핑 정보이고,
+    // 실제 미션 내용은 memberMission.getMission()을 통해 꺼냅니다.
+    public static MissionResDTO.ProgressMissionDTO toProgressMissionDTO(
+            MemberMission memberMission
+    ) {
+        Mission mission = memberMission.getMission();
+
+        return MissionResDTO.ProgressMissionDTO.builder()
+                .missionId(mission.getId())
+                .storeName(mission.getStore().getName())
+                .reward(mission.getPoint())
+                .content(mission.getText())
+                .status(memberMission.getMissionStatus().name())
+                .build();
+    }
+
+    // Page<MemberMission>을 최종 페이지 응답 DTO로 변환합니다.
+    // Page 객체 안에는 현재 페이지 데이터, 페이지 번호, 페이지 크기가 들어 있습니다.
+    public static MissionResDTO.MissionPageResponseDTO<MissionResDTO.ProgressMissionDTO> toProgressMissionPageResponseDTO(
+            Page<MemberMission> progressMissions
+    ) {
+        List<MissionResDTO.ProgressMissionDTO> data = progressMissions.getContent().stream()
+                .map(MissionConverter::toProgressMissionDTO)
+                .collect(Collectors.toList());
+
+        return MissionResDTO.MissionPageResponseDTO.<MissionResDTO.ProgressMissionDTO>builder()
+                .data(data)
+                .pageNumber(progressMissions.getNumber())
+                .pageSize(progressMissions.getSize())
                 .build();
     }
 }
