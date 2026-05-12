@@ -37,4 +37,12 @@ public class ReviewController {
         BaseSuccessCode code = GeneralSuccessCode.OK;
         return ApiResponse.onSuccess(code, ReviewConverter.toReviewCreateResult(review));
     }
+
+    @PostMapping("/reviews/me")
+    public ApiResponse<ReviewResDTO.MyReviewListDTO> getMyReviews(
+            @RequestBody ReviewReqDTO.MyReviewListRequest request
+    ) {
+        BaseSuccessCode code = GeneralSuccessCode.OK;
+        return ApiResponse.onSuccess(code, reviewService.getMyReviews(request));
+    }
 }
