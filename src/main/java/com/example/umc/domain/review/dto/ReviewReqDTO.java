@@ -15,4 +15,11 @@ public class ReviewReqDTO {
             Integer rating,
             String text
     ){}
+
+    public record MyReviewListRequest(
+            Long memberId,
+            String cursor,
+            Integer size,
+            String sortType
+    ){}
 }

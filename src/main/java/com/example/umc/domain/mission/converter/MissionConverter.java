@@ -109,9 +109,7 @@ public class MissionConverter {
                 .build();
     }
 
-    // 진행중인 미션 하나를 응답 DTO 하나로 변환합니다.
-    // MemberMission은 사용자와 미션 사이의 매핑 정보이고,
-    // 실제 미션 내용은 memberMission.getMission()을 통해 꺼냅니다.
+    //진행중인 미션
     public static MissionResDTO.ProgressMissionDTO toProgressMissionDTO(
             MemberMission memberMission
     ) {
@@ -126,8 +124,7 @@ public class MissionConverter {
                 .build();
     }
 
-    // Page<MemberMission>을 최종 페이지 응답 DTO로 변환합니다.
-    // Page 객체 안에는 현재 페이지 데이터, 페이지 번호, 페이지 크기가 들어 있습니다.
+    // Page<MemberMission>을 최종 페이지 응답 DTO로 변환.
     public static MissionResDTO.MissionPageResponseDTO<MissionResDTO.ProgressMissionDTO> toProgressMissionPageResponseDTO(
             Page<MemberMission> progressMissions
     ) {
