@@ -39,11 +39,22 @@ public class ReviewController {
         return ApiResponse.onSuccess(code, ReviewConverter.toReviewCreateResult(review));
     }
 
-    @PostMapping("/reviews/me")
+    @GetMapping("/reviews/me")
     public ApiResponse<ReviewResDTO.MyReviewListDTO> getMyReviews(
-            @RequestBody ReviewReqDTO.MyReviewListRequest request
+            @RequestParam Long memberId,
+            @RequestParam(defaultValue = "-1") String cursor,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "ID") String sortType
     ) {
         BaseSuccessCode code = GeneralSuccessCode.OK;
+
+        ReviewReqDTO.MyReviewListRequest request = new ReviewReqDTO.MyReviewListRequest(
+                memberId,
+                cursor,
+                size,
+                sortType
+        );
+
         return ApiResponse.onSuccess(code, reviewService.getMyReviews(request));
     }
 }
