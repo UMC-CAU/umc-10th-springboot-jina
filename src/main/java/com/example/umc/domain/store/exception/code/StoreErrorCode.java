@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum StoreErrorCode implements BaseErrorCode {
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER404", "해당 식당이 존재하지 않습니다.");
+    NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER404_1", "해당 가게가 존재하지 않습니다.");
 
     private final HttpStatus status; // BaseErrorCode의 getStatus()와 매칭
     private final String code;       // BaseErrorCode의 getCode()와 매칭

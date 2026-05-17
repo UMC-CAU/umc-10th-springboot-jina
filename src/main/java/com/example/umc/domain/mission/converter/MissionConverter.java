@@ -1,8 +1,12 @@
 package com.example.umc.domain.mission.converter;
 
 import com.example.umc.domain.member.dto.MemberResDTO;
+import com.example.umc.domain.mission.dto.MissionReqDTO;
 import com.example.umc.domain.mission.dto.MissionResDTO;
 import com.example.umc.domain.mission.entity.Mapping.MemberMission;
+import com.example.umc.domain.mission.entity.Mission;
+import com.example.umc.domain.store.entity.Store;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,5 +69,73 @@ public class MissionConverter {
                 .nextCursor(nextCursor)
                 .hasNext(hasNext)
                 .build(); // 이부분 추가공부 필요.
+    }
+
+    public static Mission toMission(
+            Store store,
+            MissionReqDTO.CreateMission dto
+    ){
+        return Mission.builder()
+                .store(store)
+                .conditional(dto.conditional())
+                .point(dto.point())
+                .deadline(dto.deadline())
+                .build();
+    }
+    // 가게 내 미션 조회
+    public static MissionResDTO.GetMission toGetMission(
+            Mission mission
+    ) {
+        return MissionResDTO.GetMission.builder()
+                .conditional(mission.getConditional())
+                .point(mission.getPoint())
+                .missionId(mission.getId())
+                .build();
+    }
+
+    // 페이지네이션 틀 생성
+    public static <T> MissionResDTO.Pagination<T> toPagination(
+            List<T> data,
+            Boolean hasNext,
+            String nextCursor,
+            Integer pageSize
+    ) {
+
+        return MissionResDTO.Pagination.<T>builder()
+                .data(data)
+                .hasNext(hasNext)
+                .nextCursor(nextCursor)
+                .pageSize(pageSize)
+                .build();
+    }
+
+    //진행중인 미션
+    public static MissionResDTO.ProgressMissionDTO toProgressMissionDTO(
+            MemberMission memberMission
+    ) {
+        Mission mission = memberMission.getMission();
+
+        return MissionResDTO.ProgressMissionDTO.builder()
+                .missionId(mission.getId())
+                .storeName(mission.getStore().getName())
+                .reward(mission.getPoint())
+                .content(mission.getText())
+                .status(memberMission.getMissionStatus().name())
+                .build();
+    }
+
+    // Page<MemberMission>을 최종 페이지 응답 DTO로 변환.
+    public static MissionResDTO.MissionPageResponseDTO<MissionResDTO.ProgressMissionDTO> toProgressMissionPageResponseDTO(
+            Page<MemberMission> progressMissions
+    ) {
+        List<MissionResDTO.ProgressMissionDTO> data = progressMissions.getContent().stream()
+                .map(MissionConverter::toProgressMissionDTO)
+                .collect(Collectors.toList());
+
+        return MissionResDTO.MissionPageResponseDTO.<MissionResDTO.ProgressMissionDTO>builder()
+                .data(data)
+                .pageNumber(progressMissions.getNumber())
+                .pageSize(progressMissions.getSize())
+                .build();
     }
 }

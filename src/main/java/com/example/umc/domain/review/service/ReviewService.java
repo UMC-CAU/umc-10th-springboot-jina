@@ -14,6 +14,8 @@ import com.example.umc.domain.store.exception.StoreException;
 import com.example.umc.domain.store.exception.code.StoreErrorCode;
 import com.example.umc.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +39,7 @@ public class ReviewService {
 
         // [2] 네 번째 물음표(?) : store_id (restaurant_id) 에 넣을 식당을 DB에서 데려옵니다.
         Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new StoreException(StoreErrorCode.STORE_NOT_FOUND));
+                .orElseThrow(() -> new StoreException(StoreErrorCode.NOT_FOUND));
 
         // [3] 첫 번째(content), 두 번째(rating) 물음표(?)를 포함하여 최종 쿼리문을 쏠 준비를 합니다. (Converter가 조립해 줌)
         /*
@@ -56,5 +58,44 @@ public class ReviewService {
         // INSERT INTO review (content, rating, member_id, store_id) VALUES (?, ?, ?, ?)
         // 쿼리를 빵! 하고 날려줍니다.
         return reviewRepository.save(newReview);
+    }
+
+    public ReviewResDTO.MyReviewListDTO getMyReviews(ReviewReqDTO.MyReviewListRequest request) {
+        Long memberId = request.memberId();
+        Integer size = request.size() == null ? 10 : request.size();
+        String cursor = request.cursor() == null ? "-1" : request.cursor();
+        String sortType = request.sortType() == null ? "ID" : request.sortType();
+
+        PageRequest pageRequest = PageRequest.of(0, size);
+        Slice<Review> reviewSlice;
+
+        if ("RATING".equalsIgnoreCase(sortType)) {
+            Integer cursorRating = null;
+            Long cursorId = null;
+
+            if (!"-1".equals(cursor)) {
+                String[] cursorSplit = cursor.split(":");
+                cursorRating = Integer.parseInt(cursorSplit[0]);
+                cursorId = Long.parseLong(cursorSplit[1]);
+            }
+
+            reviewSlice = reviewRepository.findMyReviewsOrderByRating(
+                    memberId,
+                    cursorRating,
+                    cursorId,
+                    pageRequest
+            );
+
+            return ReviewConverter.toMyReviewListDTO(reviewSlice, "RATING");
+        }
+
+        Long cursorId = "-1".equals(cursor) ? null : Long.parseLong(cursor);
+        reviewSlice = reviewRepository.findMyReviewsOrderById(
+                memberId,
+                cursorId,
+                pageRequest
+        );
+
+        return ReviewConverter.toMyReviewListDTO(reviewSlice, "ID");
     }
 }
