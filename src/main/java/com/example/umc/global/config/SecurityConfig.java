@@ -4,6 +4,7 @@ import com.example.umc.global.security.exception.CustomAccessDenied;
 import com.example.umc.global.security.exception.CustomEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,10 +20,8 @@ public class SecurityConfig {
             // Swagger 허용
             "/swagger-ui/**",
             "/swagger-resources/**",
-            "/v3/api-docs/**",
-            // 로그인
-            "/auth/**"
-    }; // 여기의 주소로 오는 거는 검사하지않고 그냥 통과. public Api가 여기에 포함
+            "/v3/api-docs/**"
+    }; // Swagger 문서 확인용 경로만 공통 Public API로 열어둡니다.
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -30,9 +29,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Api 서버 만들때는 그냥 꺼두는구나.. 정도만
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(allowUris).permitAll()
+                        // 회원가입은 로그인 전에도 호출할 수 있어야 하므로 Public API로 허용합니다.
+                        .requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
+                        // 위에 적지 않은 모든 API는 Private API입니다. 즉, 로그인한 사용자만 접근할 수 있습니다.
                         .anyRequest().authenticated()
-                ) // 정리하면 allowUrls나 여기엔 없지만 public api 인것들은 통과시키고 나머지는 전부 인증받게.
+                )
                 .formLogin(form -> form
+                        .usernameParameter("email")
+                        .passwordParameter("password")
                         .defaultSuccessUrl("/swagger-ui/index.html", true)
                         .permitAll()
                 ) // 폼 로그인에 대한 설정인데, 로그인 성공시에는 위에 주소로 리다이렉트, true이므로 로그인 성공시 항상.
@@ -42,7 +46,9 @@ public class SecurityConfig {
                         .permitAll()
                 ) // - `/logout` 경로로 로그아웃을 처리합니다. 로그아웃 성공 시 `/login?logout`으로 리다이렉트
                 .exceptionHandling(exception -> exception
+                        // 인가 실패: 로그인은 했지만 권한이 부족하면 403 공통 응답을 반환합니다.
                         .accessDeniedHandler(customAccessDenied())
+                        // 인증 실패: 로그인하지 않은 사용자가 Private API에 접근하면 401 공통 응답을 반환합니다.
                         .authenticationEntryPoint(customEntryPoint())
                 )
         ;
