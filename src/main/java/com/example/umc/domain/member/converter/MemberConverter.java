@@ -1,11 +1,11 @@
 package com.example.umc.domain.member.converter;
 
+import com.example.umc.domain.member.dto.MemberReqDTO;
 import com.example.umc.domain.member.dto.MemberResDTO;
 import com.example.umc.domain.member.entity.Member;
+import com.example.umc.domain.member.enums.SocialProvider;
 import com.example.umc.domain.mission.entity.Mission;
-import com.example.umc.domain.store.enums.RegionName;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,11 +82,48 @@ public class MemberConverter {
     }
     //여기까지가 홈화면 조회 컨버터
 
-    public static MemberResDTO.SignUp toSignUpResult() {
+    public static Member toMember(
+            MemberReqDTO.SignUp dto,
+            String encodedPassword
+    ) {
+        // 회원가입 요청 DTO를 DB에 저장할 Member Entity로 변환.
+        // password에는 사용자가 입력한 원문이 아니라 Service에서 BCrypt로 암호화한 값을 넣기.
+        return Member.builder()
+                .email(dto.email())
+                .password(encodedPassword)
+                .name(dto.name())
+                .nickname(dto.name())
+                .phoneNumber("")
+                .gender(dto.gender())
+                .birth(dto.birth().atStartOfDay())
+                // email/password로 가입한 일반 회원이므로 소셜 제공자는 LOCAL로 저장.
+                .socialProvider(SocialProvider.LOCAL)
+                // socialUid는 현재 Member에서 nullable=false라 임시로 email을 넣습니다.
+                // 나중에 소셜 로그인과 일반 로그인을 분리하면 구조를 더 깔끔하게 바꿀 수 있습니다.
+                .socialUid(dto.email())
+                .address(dto.address())
+                // 처음 가입한 회원의 기본값.
+                .point(0)
+                .profileUrl("")
+                .build();
+    }
+
+    public static MemberResDTO.SignUp toSignUpResult(
+            Member member,
+            List<Long> preferenceFoodIds
+    ) {
+        // 아직 선호 음식 저장 Repository까지 연결하지 않았기 때문에,
+        // 이번 미션에서는 요청으로 들어온 음식 id 목록을 문자열 목록으로 변환해서 응답에 담습니다.
+        List<String> preferenceFoods = preferenceFoodIds == null
+                ? List.of()
+                : preferenceFoodIds.stream()
+                .map(String::valueOf)
+                .toList();
+
         return MemberResDTO.SignUp.builder()
-                .memberId(1L)
-                .createdAt(LocalDateTime.now())
-                .preferenceFoods(List.of("한식", "양식", "분식"))
+                .memberId(member.getId())
+                .createdAt(member.getCreatedAt())
+                .preferenceFoods(preferenceFoods)
                 .build();
     }
 }

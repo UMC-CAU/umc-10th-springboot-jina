@@ -12,6 +12,7 @@ import com.example.umc.domain.mission.repository.MissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,10 @@ import java.util.List;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final MissionRepository missionRepository;
+
+    // SecurityConfig에 등록한 BCryptPasswordEncoder Bean이 여기로 주입.
+    // 회원가입 시 비밀번호 원문을 BCrypt 해시 값으로 바꿀 때 사용.
+    private final PasswordEncoder passwordEncoder;
 
     // Query Parameter
     public String singleParameter(
@@ -66,11 +71,33 @@ public class MemberService {
         return MemberConverter.toGetInfo(member);
     }
 
+    @Transactional
     public MemberResDTO.SignUp getSignUp(MemberReqDTO.SignUp dto) {
-        // 실제 로직에서는 dto를 Entity로 변환해 DB에 저장하겠지만,
-        // 지금은 빨간 줄을 없애고 Swagger 확인을 위해 더미 데이터를 반환.
-        return MemberConverter.toSignUpResult();
+        // 화면상 필수 약관인 연령 확인, 서비스 이용약관, 개인정보 처리방침은 반드시 true여야 함.
+        // Boolean.TRUE.equals(...)를 쓰면 값이 null이어도 NullPointerException 없이 false처럼 처리할 수 있습니다.
+        if (!Boolean.TRUE.equals(dto.ageConfirm())
+                || !Boolean.TRUE.equals(dto.serviceAgree())
+                || !Boolean.TRUE.equals(dto.privacyAgree())) {
+            throw new MemberException(MemberErrorCode.TERM_NOT_AGREED);
+        }
+
+        // 폼 로그인에서 같은 email로 중복 가입되지 않게 막기.
+        if (memberRepository.existsByEmail(dto.email())) {
+            throw new MemberException(MemberErrorCode.MEMBER_ALREADY_EXISTS);
+        }
+
+        // 솔트 사용
+        String encodedPassword = passwordEncoder.encode(dto.password());
+
+        // DTO를 Entity로 바꾸고, 암호화된 비밀번호를 넣어서 DB에 저장.
+        Member member = MemberConverter.toMember(dto, encodedPassword);
+        Member savedMember = memberRepository.save(member);
+
+        // 저장된 memberId, createdAt을 응답으로 돌려줍니다.
+        return MemberConverter.toSignUpResult(savedMember, dto.preferenceFoods());
     }
+
+
 
     public  MemberResDTO.Home getHome(Long memberId, String cursorStr, Integer size){
 

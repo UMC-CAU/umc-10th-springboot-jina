@@ -1,5 +1,5 @@
 package com.example.umc.domain.member.enums;
 
 public enum SocialProvider {
-    KAKAO, NAVER
+    LOCAL, KAKAO, NAVER
 }
