@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.umc.domain.member.enums.SocialType.KAKAO;
@@ -38,7 +39,9 @@ public class CustomOAuthService extends DefaultOAuth2UserService { //OAuth 과�
         SocialType providerId;
         String socialUid;
         Map<String, Object> attributes = oAuthMember.getAttribute("kakao_account");
-        Map<String, Object> profile = (Map<String, Object>) attributes.get("profile");
+        Map<String, Object> profile = attributes == null
+                ? new HashMap<>()
+                : (Map<String, Object>) attributes.get("profile");
         try {
             providerId = SocialType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
             socialUid = String.valueOf((Long) oAuthMember.getAttribute("id"));
@@ -50,8 +53,14 @@ public class CustomOAuthService extends DefaultOAuth2UserService { //OAuth 과�
         OAuthDTO dto;
         switch (providerId) {
             case KAKAO -> {
-                String email = attributes.get("email").toString();
-                String name = profile.get("nickname").toString();
+                // 카카오 동의항목 설정에 따라 email/profile이 비어 있을 수 있어 기본값을 둡니다.
+                // 그래도 socialUid는 카카오 고유 id라 회원 식별에는 문제가 없습니다.
+                String email = attributes != null && attributes.get("email") != null
+                        ? attributes.get("email").toString()
+                        : "kakao_" + socialUid + "@oauth.local";
+                String name = profile != null && profile.get("nickname") != null
+                        ? profile.get("nickname").toString()
+                        : "카카오회원";
                 dto = new KakaoDTO(socialUid, email, name);
             }
             default -> throw new MemberException(MemberErrorCode.NOT_SUPPORT_SOCIAL_PROVIDER);

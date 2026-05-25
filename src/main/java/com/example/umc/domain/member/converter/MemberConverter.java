@@ -3,10 +3,13 @@ package com.example.umc.domain.member.converter;
 import com.example.umc.domain.member.dto.MemberReqDTO;
 import com.example.umc.domain.member.dto.MemberResDTO;
 import com.example.umc.domain.member.entity.Member;
+import com.example.umc.domain.member.enums.Address;
+import com.example.umc.domain.member.enums.Gender;
 import com.example.umc.domain.member.enums.SocialType;
 import com.example.umc.domain.mission.entity.Mission;
 import com.example.umc.global.security.dto.OAuthDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,17 +113,20 @@ public class MemberConverter {
     }
 
     public static Member toMember(OAuthDTO dto) {
+        // OAuth 로그인은 카카오에서 email/nickname/id 정도만 받기 때문에,
+        // 현재 DB에서 NOT NULL인 회원 기본값은 임시 기본값으로 채워 저장합니다.
+        // 실제 서비스라면 소셜 로그인 후 추가 정보 입력 화면에서 gender/birth/address를 받는 흐름으로 분리합니다.
         return Member.builder()
                 .email(dto.getSocialEmail())
                 .password("")
                 .name(dto.getName())
                 .nickname(dto.getName())
                 .phoneNumber("")
-                .gender(null)
-                .birth(null)
+                .gender(Gender.MALE)
+                .birth(LocalDate.of(2000, 1, 1).atStartOfDay())
                 .socialType(dto.getSocialType())
                 .socialUid(dto.getSocialUid())
-                .address(null)
+                .address(Address.안암)
                 .point(0)
                 .profileUrl("")
                 .build();
