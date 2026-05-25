@@ -10,6 +10,7 @@ import com.example.umc.domain.member.repository.MemberRepository;
 import com.example.umc.domain.mission.entity.Mission;
 import com.example.umc.domain.mission.repository.MissionRepository;
 import com.example.umc.global.security.entity.AuthMember;
+import com.example.umc.global.security.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.List;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final MissionRepository missionRepository;
+    private final JwtUtil jwtUtil;
 
     // SecurityConfig에 등록한 BCryptPasswordEncoder Bean이 여기로 주입.
     // 회원가입 시 비밀번호 원문을 BCrypt 해시 값으로 바꿀 때 사용.
@@ -92,6 +94,24 @@ public class MemberService {
 
         // 저장된 memberId, createdAt을 응답으로 돌려줍니다.
         return MemberConverter.toSignUpResult(savedMember, dto.preferenceFoods());
+    }
+
+    @Transactional(readOnly = true)
+    public MemberResDTO.Login login(MemberReqDTO.Login dto) {
+        // 로그인은 email로 기존 회원을 먼저 찾습니다.
+        Member member = memberRepository.findByEmail(dto.email())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        // DB에는 BCrypt로 암호화된 비밀번호가 저장되어 있으므로 matches로 원문과 해시값을 비교합니다.
+        if (!passwordEncoder.matches(dto.password(), member.getPassword())) {
+            throw new MemberException(MemberErrorCode.INVALID_PASSWORD);
+        }
+
+        // 검증이 끝난 회원 정보를 AuthMember로 감싸 기존 JwtUtil을 통해 AccessToken을 발급합니다.
+        String accessToken = jwtUtil.createAccessToken(new AuthMember(member));
+
+        // 컨트롤러에는 Entity가 아니라 로그인 응답 DTO 형태로 반환합니다.
+        return MemberConverter.toLogin(accessToken);
     }
 
 

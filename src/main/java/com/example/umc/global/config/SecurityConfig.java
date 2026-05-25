@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(allowUris).permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/signup").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         // OAuth 로그인 시작 주소와 카카오 콜백 주소는 로그인 전에도 접근 가능해야 합니다.
                         .requestMatchers("/oauth/authorize/**", "/oauth/callback/**").permitAll()
                         .anyRequest().authenticated()

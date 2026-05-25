@@ -68,4 +68,15 @@ public class MemberReqDTO {
 
             List<Long> preferenceFoods
     ){}
+
+    // 로그인 API에서 받을 요청 값.
+    // 회원가입 때 저장한 email/password 조합으로 JWT 토큰을 발급받기 위해 사용.
+    public record Login(
+            @Email
+            @NotBlank
+            String email,
+
+            @NotBlank
+            String password
+    ){}
 }
