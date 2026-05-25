@@ -64,9 +64,10 @@ public class MemberService {
         return "OK";
     }
 
+    @Transactional(readOnly = true)
     public MemberResDTO.GetInfo getInfo(AuthMember member) {
-
-        // 컨버터를 이용해서 응답 DTO 생성 & return
+        // Controller에서 받은 AuthMember는 JWT 토큰 검증이 끝난 현재 로그인 회원입니다.
+        // Entity를 그대로 반환하지 않고, 화면에 필요한 값만 응답 DTO로 변환해서 돌려줍니다.
         return MemberConverter.toGetInfo(member.getMember());
     }
 
