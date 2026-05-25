@@ -9,6 +9,7 @@ import com.example.umc.domain.member.exception.code.MemberErrorCode;
 import com.example.umc.domain.member.repository.MemberRepository;
 import com.example.umc.domain.mission.entity.Mission;
 import com.example.umc.domain.mission.repository.MissionRepository;
+import com.example.umc.global.security.entity.AuthMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -61,14 +62,10 @@ public class MemberService {
         return "OK";
     }
 
-    public MemberResDTO.GetInfo getInfo(Long memberId) {
-
-        // DB에서 해당 유저 ID로 데이터 조회
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+    public MemberResDTO.GetInfo getInfo(AuthMember member) {
 
         // 컨버터를 이용해서 응답 DTO 생성 & return
-        return MemberConverter.toGetInfo(member);
+        return MemberConverter.toGetInfo(member.getMember());
     }
 
     @Transactional

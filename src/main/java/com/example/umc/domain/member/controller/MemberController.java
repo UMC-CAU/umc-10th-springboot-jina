@@ -6,7 +6,9 @@ import com.example.umc.domain.member.service.MemberService;
 import com.example.umc.global.apiPayload.ApiResponse;
 import com.example.umc.global.apiPayload.code.BaseSuccessCode;
 import com.example.umc.global.apiPayload.code.GeneralSuccessCode;
+import com.example.umc.global.security.entity.AuthMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,11 +20,10 @@ public class MemberController {
 
     @GetMapping("v1/users/me")
     public ApiResponse<MemberResDTO.GetInfo> getInfo(
-
-            @RequestParam(name = "memberId") Long memberId    ){
-
+            @AuthenticationPrincipal AuthMember member)
+    {
         BaseSuccessCode code = GeneralSuccessCode.OK;
-        return ApiResponse.onSuccess(code, memberService.getInfo(memberId));
+        return ApiResponse.onSuccess(code, memberService.getInfo(member));
     }
 
     @GetMapping("/home")// get이라 req없음 즉 파라미터 x

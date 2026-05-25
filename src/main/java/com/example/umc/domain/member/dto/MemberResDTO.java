@@ -29,6 +29,11 @@ public class MemberResDTO {
     ){}
 
     @Builder
+    public record Login(
+            String accessToken
+    ){}
+
+    @Builder
     public record Home(
             Integer point,
             Boolean alarm,
