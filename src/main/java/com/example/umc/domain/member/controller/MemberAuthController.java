@@ -29,4 +29,13 @@ public class MemberAuthController {
         BaseSuccessCode code = GeneralSuccessCode.OK;
         return ApiResponse.onSuccess(code, memberService.getSignUp(dto));
     }
+
+    @PostMapping("/login")
+    public ApiResponse<MemberResDTO.Login> login(
+            // email/password를 DTO로 받은 뒤 Service에서 실제 비밀번호 검증과 JWT 발급을 처리.
+            @RequestBody @Valid MemberReqDTO.Login dto
+    ) {
+        BaseSuccessCode code = GeneralSuccessCode.OK;
+        return ApiResponse.onSuccess(code, memberService.login(dto));
+    }
 }

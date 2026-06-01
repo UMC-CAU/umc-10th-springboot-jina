@@ -3,9 +3,13 @@ package com.example.umc.domain.member.converter;
 import com.example.umc.domain.member.dto.MemberReqDTO;
 import com.example.umc.domain.member.dto.MemberResDTO;
 import com.example.umc.domain.member.entity.Member;
-import com.example.umc.domain.member.enums.SocialProvider;
+import com.example.umc.domain.member.enums.Address;
+import com.example.umc.domain.member.enums.Gender;
+import com.example.umc.domain.member.enums.SocialType;
 import com.example.umc.domain.mission.entity.Mission;
+import com.example.umc.global.security.dto.OAuthDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,12 +101,32 @@ public class MemberConverter {
                 .gender(dto.gender())
                 .birth(dto.birth().atStartOfDay())
                 // email/password로 가입한 일반 회원이므로 소셜 제공자는 LOCAL로 저장.
-                .socialProvider(SocialProvider.LOCAL)
+                .socialType(SocialType.LOCAL)
                 // socialUid는 현재 Member에서 nullable=false라 임시로 email을 넣습니다.
                 // 나중에 소셜 로그인과 일반 로그인을 분리하면 구조를 더 깔끔하게 바꿀 수 있습니다.
                 .socialUid(dto.email())
                 .address(dto.address())
                 // 처음 가입한 회원의 기본값.
+                .point(0)
+                .profileUrl("")
+                .build();
+    }
+
+    public static Member toMember(OAuthDTO dto) {
+        // OAuth 로그인은 카카오에서 email/nickname/id 정도만 받기 때문에,
+        // 현재 DB에서 NOT NULL인 회원 기본값은 임시 기본값으로 채워 저장합니다.
+        // 실제 서비스라면 소셜 로그인 후 추가 정보 입력 화면에서 gender/birth/address를 받는 흐름으로 분리합니다.
+        return Member.builder()
+                .email(dto.getSocialEmail())
+                .password("")
+                .name(dto.getName())
+                .nickname(dto.getName())
+                .phoneNumber("")
+                .gender(Gender.MALE)
+                .birth(LocalDate.of(2000, 1, 1).atStartOfDay())
+                .socialType(dto.getSocialType())
+                .socialUid(dto.getSocialUid())
+                .address(Address.안암)
                 .point(0)
                 .profileUrl("")
                 .build();
@@ -124,6 +148,12 @@ public class MemberConverter {
                 .memberId(member.getId())
                 .createdAt(member.getCreatedAt())
                 .preferenceFoods(preferenceFoods)
+                .build();
+    }
+
+    public static MemberResDTO.Login toLogin(String accessToken) {
+        return MemberResDTO.Login.builder()
+                .accessToken(accessToken)
                 .build();
     }
 }

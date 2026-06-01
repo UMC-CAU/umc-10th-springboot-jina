@@ -1,6 +1,7 @@
 package com.example.umc.domain.member.repository;
 
 import com.example.umc.domain.member.entity.Member;
+import com.example.umc.domain.member.enums.SocialType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -15,4 +16,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 회원가입할 때 같은 이메일이 이미 DB에 있는지 확인하기 위해 사용합.
     boolean existsByEmail(String email);
 
+    Optional<Member> findBySocialTypeAndSocialUid(SocialType socialType, String socialUid);
 }

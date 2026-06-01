@@ -6,7 +6,9 @@ import com.example.umc.domain.member.service.MemberService;
 import com.example.umc.global.apiPayload.ApiResponse;
 import com.example.umc.global.apiPayload.code.BaseSuccessCode;
 import com.example.umc.global.apiPayload.code.GeneralSuccessCode;
+import com.example.umc.global.security.entity.AuthMember;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,13 +18,14 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("v1/users/me")
+    @GetMapping("/v1/users/me")
     public ApiResponse<MemberResDTO.GetInfo> getInfo(
-
-            @RequestParam(name = "memberId") Long memberId    ){
-
+            // JwtAuthFilter가 토큰을 검증한 뒤 SecurityContextHolder에 넣어둔 현재 로그인 회원입니다.
+            // 그래서 마이페이지는 더 이상 memberId를 요청으로 받지 않고, 토큰 주인 정보를 사용합니다.
+            @AuthenticationPrincipal AuthMember member)
+    {
         BaseSuccessCode code = GeneralSuccessCode.OK;
-        return ApiResponse.onSuccess(code, memberService.getInfo(memberId));
+        return ApiResponse.onSuccess(code, memberService.getInfo(member));
     }
 
     @GetMapping("/home")// get이라 req없음 즉 파라미터 x
